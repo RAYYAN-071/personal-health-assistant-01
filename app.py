@@ -1,17 +1,17 @@
 # Install required libraries
+!pip install streamlit groq SpeechRecognition gTTS
 
 # Import necessary modules
 import os
 import streamlit as st
-import pyttsx3
 import speech_recognition as sr
+from gtts import gTTS
 from groq import Groq
+import tempfile
+import IPython.display as ipd
 
 # Configure the Groq client
 client = Groq(api_key="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")
-
-# Initialize text-to-speech engine
-engine = pyttsx3.init()
 
 # Streamlit app
 def main():
@@ -98,7 +98,7 @@ def main():
                 st.write(response)
                 st.markdown('</div>', unsafe_allow_html=True)
 
-                # Text-to-speech for chatbot response
+                # Text-to-speech for chatbot response (using gTTS)
                 speak_response(response)
             else:
                 st.warning("Please enter both your age and condition to get advice.")
@@ -120,10 +120,14 @@ def transcribe_audio(uploaded_file):
             st.error(f"Could not request results from Google Speech Recognition service; {e}")
             return ""
 
-# Function for text-to-speech
+# Function for text-to-speech (using gTTS)
 def speak_response(response):
-    engine.say(response)
-    engine.runAndWait()
+    # Convert the text to speech using Google Text-to-Speech (gTTS)
+    tts = gTTS(text=response, lang='en')
+    with tempfile.NamedTemporaryFile(delete=True) as temp_audio:
+        tts.save(temp_audio.name)
+        audio_file = temp_audio.name
+        st.audio(audio_file, format="audio/mp3")
 
 # Run the Streamlit app
 if __name__ == "__main__":
