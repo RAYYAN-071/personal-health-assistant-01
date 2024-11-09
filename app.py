@@ -23,15 +23,19 @@ def main():
         }
         .title {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            color: #FF6347; /* Tomato red */
+            background: linear-gradient(to right, #4B6EAF, #5F2A7F); /* Blue to Purple Gradient */
+            color: transparent;
+            -webkit-background-clip: text;
             font-size: 36px;
             text-align: center;
+            font-weight: bold;
         }
         .subheader {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            color: #FFD700; /* Vibrant yellow */
+            color: #B0B0B0; /* Light Silver */
             font-size: 24px;
             text-align: center;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
         .button {
             background-color: #FF1493; /* Deep pink */
@@ -55,7 +59,7 @@ def main():
         </style>
     """, unsafe_allow_html=True)
 
-    # Header and subheader with medical emoji
+    # Header and subheader with updated colors
     st.markdown('<p class="title">💊 Personal Health Assistant</p>', unsafe_allow_html=True)
     st.markdown('<p class="subheader">Get personalized health advice, diet suggestions, and precautions.</p>', unsafe_allow_html=True)
 
