@@ -1,5 +1,4 @@
 # Install required libraries
-!pip install streamlit groq
 
 # Import necessary modules
 import os
