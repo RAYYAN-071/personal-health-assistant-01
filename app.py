@@ -3,10 +3,15 @@
 # Import necessary modules
 import os
 import streamlit as st
+import pyttsx3
+import speech_recognition as sr
 from groq import Groq
 
 # Configure the Groq client
 client = Groq(api_key="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")
+
+# Initialize text-to-speech engine
+engine = pyttsx3.init()
 
 # Streamlit app
 def main():
@@ -26,7 +31,7 @@ def main():
         }
         .subheader {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            color: #32CD32; /* Lime green */
+            color: #FFD700; /* Vibrant yellow */
             font-size: 24px;
             text-align: center;
         }
@@ -63,6 +68,12 @@ def main():
         condition = st.text_area("Describe Your Condition", placeholder="e.g., I have a fever and headache.")
         st.markdown('</div>', unsafe_allow_html=True)
 
+        # Audio recording and speech-to-text
+        if st.button("Record Your Condition (Audio)"):
+            st.write("Recording your voice, please speak clearly.")
+            with st.spinner("Recording..."):
+                condition = record_audio()
+
         # Advice button to get the response from the model
         submit_button = st.form_submit_button("Get Advice")
         
@@ -85,8 +96,31 @@ def main():
                 st.write("### Advice and Recommendations:")
                 st.write(response)
                 st.markdown('</div>', unsafe_allow_html=True)
+
+                # Text-to-speech for chatbot response
+                speak_response(response)
             else:
                 st.warning("Please enter both your age and condition to get advice.")
+
+# Function for recording audio and converting to text
+def record_audio():
+    recognizer = sr.Recognizer()
+    mic = sr.Microphone()
+    try:
+        with mic as source:
+            recognizer.adjust_for_ambient_noise(source)
+            audio = recognizer.listen(source)
+            text = recognizer.recognize_google(audio)
+            st.write(f"You said: {text}")
+            return text
+    except Exception as e:
+        st.error("Sorry, I couldn't understand the audio.")
+        return ""
+
+# Function for text-to-speech
+def speak_response(response):
+    engine.say(response)
+    engine.runAndWait()
 
 # Run the Streamlit app
 if __name__ == "__main__":
