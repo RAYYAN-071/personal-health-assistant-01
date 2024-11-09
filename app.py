@@ -1,5 +1,4 @@
 # Install required libraries
-!pip install streamlit groq SpeechRecognition gTTS
 
 # Import necessary modules
 import os
