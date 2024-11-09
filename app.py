@@ -1,4 +1,5 @@
 # Install required libraries
+!pip install streamlit groq SpeechRecognition gTTS
 
 # Import necessary modules
 import os
@@ -13,7 +14,7 @@ client = Groq(api_key="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"
 
 # Streamlit app
 def main():
-    # Set up the UI with an eye-catching theme and custom fonts
+    # Set up the UI with a medical theme and custom fonts
     st.markdown("""
         <style>
         .main {
@@ -23,7 +24,7 @@ def main():
         }
         .title {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(to right, #4B6EAF, #5F2A7F); /* Blue to Purple Gradient */
+            background: linear-gradient(to right, #007BFF, #28A745); /* Blue to Green Gradient */
             color: transparent;
             -webkit-background-clip: text;
             font-size: 36px;
@@ -32,13 +33,13 @@ def main():
         }
         .subheader {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            color: #B0B0B0; /* Light Silver */
+            color: #6C757D; /* Grayish Blue */
             font-size: 24px;
             text-align: center;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
         .button {
-            background-color: #FF1493; /* Deep pink */
+            background-color: #28A745; /* Fresh Green */
             color: white;
             padding: 12px 24px;
             font-size: 18px;
@@ -46,20 +47,20 @@ def main():
             margin-top: 20px;
         }
         .advice {
-            background-color: #FFFACD; /* Lemon chiffon */
+            background-color: #F0F8FF; /* Alice Blue */
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .input-fields {
-            background-color: #F0FFF0; /* Honeydew */
+            background-color: #E8F5E9; /* Light Green */
             padding: 15px;
             border-radius: 10px;
         }
         </style>
     """, unsafe_allow_html=True)
 
-    # Header and subheader with updated colors
+    # Header and subheader with updated medical colors
     st.markdown('<p class="title">💊 Personal Health Assistant</p>', unsafe_allow_html=True)
     st.markdown('<p class="subheader">Get personalized health advice, diet suggestions, and precautions.</p>', unsafe_allow_html=True)
 
