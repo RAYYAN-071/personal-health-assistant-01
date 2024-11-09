@@ -68,11 +68,12 @@ def main():
         condition = st.text_area("Describe Your Condition", placeholder="e.g., I have a fever and headache.")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # Audio recording and speech-to-text
-        if st.button("Record Your Condition (Audio)"):
-            st.write("Recording your voice, please speak clearly.")
-            with st.spinner("Recording..."):
-                condition = record_audio()
+        # Audio file upload
+        uploaded_file = st.file_uploader("Upload Your Audio (MP3, WAV)", type=["mp3", "wav"])
+
+        if uploaded_file is not None:
+            # Convert the uploaded audio to text
+            condition = transcribe_audio(uploaded_file)
 
         # Advice button to get the response from the model
         submit_button = st.form_submit_button("Get Advice")
@@ -102,20 +103,22 @@ def main():
             else:
                 st.warning("Please enter both your age and condition to get advice.")
 
-# Function for recording audio and converting to text
-def record_audio():
+# Function to transcribe uploaded audio
+def transcribe_audio(uploaded_file):
     recognizer = sr.Recognizer()
-    mic = sr.Microphone()
-    try:
-        with mic as source:
-            recognizer.adjust_for_ambient_noise(source)
-            audio = recognizer.listen(source)
-            text = recognizer.recognize_google(audio)
+    audio = sr.AudioFile(uploaded_file)
+    with audio as source:
+        audio_data = recognizer.record(source)
+        try:
+            text = recognizer.recognize_google(audio_data)
             st.write(f"You said: {text}")
             return text
-    except Exception as e:
-        st.error("Sorry, I couldn't understand the audio.")
-        return ""
+        except sr.UnknownValueError:
+            st.error("Sorry, could not understand the audio.")
+            return ""
+        except sr.RequestError as e:
+            st.error(f"Could not request results from Google Speech Recognition service; {e}")
+            return ""
 
 # Function for text-to-speech
 def speak_response(response):
