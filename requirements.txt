@@ -1,4 +1,4 @@
 streamlit
 groq
 SpeechRecognition
-pyttsx3
+gTTS
