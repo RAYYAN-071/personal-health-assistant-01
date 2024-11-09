@@ -7,7 +7,6 @@ import speech_recognition as sr
 from gtts import gTTS
 from groq import Groq
 import tempfile
-import IPython.display as ipd
 
 # Configure the Groq client
 client = Groq(api_key="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")
