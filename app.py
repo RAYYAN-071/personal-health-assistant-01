@@ -1,16 +1,15 @@
+# Install required libraries
+
+# Import necessary modules
 import os
 import streamlit as st
 import speech_recognition as sr
 from gtts import gTTS
 from groq import Groq
 import tempfile
-from pydub import AudioSegment
-
-# Set the path to ffmpeg executable if not found automatically
-AudioSegment.ffmpeg = "/usr/bin/ffmpeg"  # Update this path if needed
 
 # Configure the Groq client
-client = Groq(api_key="your_groq_api_key")
+client = Groq(api_key="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")
 
 # Streamlit app
 def main():
@@ -78,7 +77,7 @@ def main():
             # Convert the uploaded audio to text
             condition = transcribe_audio(uploaded_file)
 
-        # Submit button
+        # Advice button to get the response from the model
         submit_button = st.form_submit_button("Get Advice")
         
         if submit_button:
