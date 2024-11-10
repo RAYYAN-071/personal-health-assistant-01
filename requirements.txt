@@ -3,4 +3,3 @@ speechrecognition
 gtts
 groq
 pydub
-pillow
