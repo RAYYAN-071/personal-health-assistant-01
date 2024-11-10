@@ -5,27 +5,15 @@ from gtts import gTTS
 from groq import Groq
 import tempfile
 from pydub import AudioSegment
-import ffmpeg
+
+# Set the path to ffmpeg executable if not found automatically
+AudioSegment.ffmpeg = "/usr/bin/ffmpeg"  # Update this path if needed
 
 # Configure the Groq client
-client = Groq(api_key="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")
-
-# Check if ffmpeg is installed
-def check_ffmpeg():
-    try:
-        if os.system("ffmpeg -version") != 0:
-            raise Exception("FFmpeg is not installed or not accessible.")
-    except Exception as e:
-        st.error(f"Error: {e}")
-        return False
-    return True
+client = Groq(api_key="your_groq_api_key")
 
 # Streamlit app
 def main():
-    # Check FFmpeg availability
-    if not check_ffmpeg():
-        return
-
     # Set up the UI with a medical theme and custom fonts
     st.markdown("""
         <style>
@@ -90,7 +78,7 @@ def main():
             # Convert the uploaded audio to text
             condition = transcribe_audio(uploaded_file)
 
-        # Advice button to get the response from the model
+        # Submit button
         submit_button = st.form_submit_button("Get Advice")
         
         if submit_button:
@@ -121,21 +109,19 @@ def main():
 # Function to transcribe uploaded audio
 def transcribe_audio(uploaded_file):
     recognizer = sr.Recognizer()
-    audio = AudioSegment.from_file(uploaded_file)
-    with tempfile.NamedTemporaryFile(delete=True) as temp_file:
-        audio.export(temp_file.name, format="wav")
-        with sr.AudioFile(temp_file.name) as source:
-            audio_data = recognizer.record(source)
-            try:
-                text = recognizer.recognize_google(audio_data)
-                st.write(f"You said: {text}")
-                return text
-            except sr.UnknownValueError:
-                st.error("Sorry, could not understand the audio.")
-                return ""
-            except sr.RequestError as e:
-                st.error(f"Could not request results from Google Speech Recognition service; {e}")
-                return ""
+    audio = sr.AudioFile(uploaded_file)
+    with audio as source:
+        audio_data = recognizer.record(source)
+        try:
+            text = recognizer.recognize_google(audio_data)
+            st.write(f"You said: {text}")
+            return text
+        except sr.UnknownValueError:
+            st.error("Sorry, could not understand the audio.")
+            return ""
+        except sr.RequestError as e:
+            st.error(f"Could not request results from Google Speech Recognition service; {e}")
+            return ""
 
 # Function for text-to-speech (using gTTS)
 def speak_response(response):
