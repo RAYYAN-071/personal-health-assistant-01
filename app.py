@@ -1,17 +1,4 @@
-# Install required libraries
-
-# Import necessary modules
-import os
-import streamlit as st
-import speech_recognition as sr
-from gtts import gTTS
-from groq import Groq
-import tempfile
-
-# Configure the Groq client
-client = Groq(api_key="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")
-
-# Streamlit app
+# Inside the main function
 def main():
     # Set up the UI with a medical theme and custom fonts
     st.markdown("""
@@ -77,7 +64,7 @@ def main():
             # Convert the uploaded audio to text
             condition = transcribe_audio(uploaded_file)
 
-        # Advice button to get the response from the model
+        # Add the submit button for the form
         submit_button = st.form_submit_button("Get Advice")
         
         if submit_button:
@@ -104,33 +91,34 @@ def main():
                 speak_response(response)
             else:
                 st.warning("Please enter both your age and condition to get advice.")
+                from pydub import AudioSegment
+import io
 
-# Function to transcribe uploaded audio
 def transcribe_audio(uploaded_file):
     recognizer = sr.Recognizer()
-    audio = sr.AudioFile(uploaded_file)
-    with audio as source:
-        audio_data = recognizer.record(source)
-        try:
-            text = recognizer.recognize_google(audio_data)
-            st.write(f"You said: {text}")
-            return text
-        except sr.UnknownValueError:
-            st.error("Sorry, could not understand the audio.")
-            return ""
-        except sr.RequestError as e:
-            st.error(f"Could not request results from Google Speech Recognition service; {e}")
-            return ""
+    
+    # Convert the uploaded MP3 file to WAV using pydub
+    if uploaded_file.type == "audio/mp3":
+        audio = AudioSegment.from_mp3(uploaded_file)
+    elif uploaded_file.type == "audio/wav":
+        audio = AudioSegment.from_wav(uploaded_file)
+    else:
+        st.error("Unsupported file format. Please upload an MP3 or WAV file.")
+        return ""
+    
+    # Save the converted audio to a temporary file
+    with tempfile.NamedTemporaryFile(delete=True) as temp_wav_file:
+        audio.export(temp_wav_file.name, format="wav")
+        with sr.AudioFile(temp_wav_file.name) as source:
+            audio_data = recognizer.record(source)
+            try:
+                text = recognizer.recognize_google(audio_data)
+                st.write(f"You said: {text}")
+                return text
+            except sr.UnknownValueError:
+                st.error("Sorry, could not understand the audio.")
+                return ""
+            except sr.RequestError as e:
+                st.error(f"Could not request results from Google Speech Recognition service; {e}")
+                return ""
 
-# Function for text-to-speech (using gTTS)
-def speak_response(response):
-    # Convert the text to speech using Google Text-to-Speech (gTTS)
-    tts = gTTS(text=response, lang='en')
-    with tempfile.NamedTemporaryFile(delete=True) as temp_audio:
-        tts.save(temp_audio.name)
-        audio_file = temp_audio.name
-        st.audio(audio_file, format="audio/mp3")
-
-# Run the Streamlit app
-if __name__ == "__main__":
-    main()
