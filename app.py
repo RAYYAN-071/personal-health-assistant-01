@@ -7,6 +7,8 @@ import speech_recognition as sr
 from gtts import gTTS
 from groq import Groq
 import tempfile
+from pydub import AudioSegment
+import io
 
 # Configure the Groq client
 client = Groq(api_key="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")
@@ -71,11 +73,21 @@ def main():
         st.markdown('</div>', unsafe_allow_html=True)
 
         # Audio file upload
-        uploaded_file = st.file_uploader("Upload Your Audio (MP3, WAV)", type=["mp3", "wav"])
+        uploaded_file = st.file_uploader("Upload Your Audio (MP3, WAV, OGG, OPUS)", type=["mp3", "wav", "ogg", "opus"])
 
         if uploaded_file is not None:
+            # Convert WhatsApp audio formats (OGG, OPUS) to WAV
+            if uploaded_file.type in ["audio/ogg", "audio/opus"]:
+                uploaded_file = convert_audio(uploaded_file)
+            
             # Convert the uploaded audio to text
             condition = transcribe_audio(uploaded_file)
+
+        # Direct audio recording option (currently limited by browser capabilities)
+        audio_data = st.audio("Click to record your voice", format="audio/wav")
+        if audio_data:
+            # Process recorded audio directly
+            condition = transcribe_audio(audio_data)
 
         # Advice button to get the response from the model
         submit_button = st.form_submit_button("Get Advice")
@@ -121,6 +133,15 @@ def transcribe_audio(uploaded_file):
         except sr.RequestError as e:
             st.error(f"Could not request results from Google Speech Recognition service; {e}")
             return ""
+
+# Function to convert audio from OGG/OPUS to WAV format
+def convert_audio(uploaded_file):
+    # Convert the uploaded audio to WAV format using pydub
+    audio = AudioSegment.from_file(uploaded_file)
+    with tempfile.NamedTemporaryFile(delete=True, suffix=".wav") as temp_wav:
+        audio.export(temp_wav.name, format="wav")
+        temp_wav.seek(0)
+        return temp_wav
 
 # Function for text-to-speech (using gTTS)
 def speak_response(response):
