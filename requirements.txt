@@ -1,4 +1,7 @@
 streamlit
-groq
-SpeechRecognition
-gTTS
+speechrecognition
+pydub
+gtts
+openai
+ffmpeg
+requests
