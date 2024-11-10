@@ -1,10 +1,12 @@
+# Install required libraries
+
+# Import necessary modules
 import os
 import streamlit as st
 import speech_recognition as sr
 from gtts import gTTS
 from groq import Groq
 import tempfile
-from pydub import AudioSegment
 
 # Configure the Groq client
 client = Groq(api_key="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")
@@ -75,7 +77,7 @@ def main():
             # Convert the uploaded audio to text
             condition = transcribe_audio(uploaded_file)
 
-        # Add the submit button for the form
+        # Advice button to get the response from the model
         submit_button = st.form_submit_button("Get Advice")
         
         if submit_button:
