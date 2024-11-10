@@ -1,4 +1,6 @@
 streamlit
+speechrecognition
+gtts
 groq
-SpeechRecognition
-gTTS
+pydub
+pillow
