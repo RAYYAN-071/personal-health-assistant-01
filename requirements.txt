@@ -1,6 +1,4 @@
 streamlit
-speechrecognition
-gtts
-pydub
 groq
-ffmpeg-python
+SpeechRecognition
+gTTS
